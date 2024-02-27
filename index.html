@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avis Webhook</title>
+  <style>
+    body {
+      background-color: #2b2d31;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    #formulaire {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background-color: #7289da;
+      border-radius: 10px;
+      position: relative;
+    }
+
+    h1 {
+      color: #7289da;
+      text-align: center;
+    }
+
+    #avisForm {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    textarea {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    input[type="radio"] {
+      margin-right: 5px;
+    }
+
+    #barème {
+      width: 100%;
+    }
+
+    #lienAvis {
+      display: block;
+      text-align: center;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+
+    #boutonEnvoyer {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    #logoContainer {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    #logo {
+      max-width: 60px;
+      height: auto;
+      margin-right: 10px;
+      border-radius: 5px;
+    }
+
+    #nomLogo {
+      font-size: 20px;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="formulaire">
+    <div id="logoContainer">
+      <img id="logo" src="https://cdn.discordapp.com/attachments/1210276362758258728/1211144638237384775/Capture_d_ecran_2024-02-20_a_13.50.58-removebg-preview.png?ex=65ed2157&is=65daac57&hm=46bf65930f8afa76f7fdb45a76b3d83bdb08512177f03bb56d17a87cb34a58bd" alt="Logo du site">
+      <div id="nomLogo">EzroGen</div>
+    </div>
+    <h1>Laisse ton avis!</h1>
+    <form id="avisForm">
+      <label for="pseudoUtilisateur">Pseudo :</label>
+      <input type="text" id="pseudoUtilisateur" placeholder="Entrez votre pseudo...">
+      <textarea id="avis" rows="4" placeholder="Écris ton avis ici..."></textarea>
+      <p>Appréciation:
+        <label><input type="radio" name="appreciation" value="positive"> Positive</label>
+        <label><input type="radio" name="appreciation" value="negative"> Négative</label>
+      </p>
+      <p>Barème /10: <code style="color: #2b2d31;">`0`</code> (Mauvais) à <code style="color: #2b2d31;">`10`</code> (Excellent)</p>
+      <input type="range" id="barème" name="barème" min="0" max="10" step="0.1">
+      <a id="lienAvis" href="https://discord.gg/auRgKUKhVP" target="_blank">Nous saurons qui vous êtes sur le Discord, Troll -> Ban !</a>
+      <button id="boutonEnvoyer" type="button" onclick="envoyerAvis()">Envoyer l'avis</button>
+    </form>
+  </div>
+
+  <script>
+    function envoyerAvis() {
+      const pseudoUtilisateur = document.getElementById('pseudoUtilisateur').value.trim();
+      if (!pseudoUtilisateur) {
+        alert('Veuillez entrer un pseudo.');
+        return;
+      }
+
+      const avisTexte = document.getElementById('avis').value;
+      const appreciation = document.querySelector('input[name="appreciation"]:checked');
+      const barème = document.getElementById('barème').value;
+
+      if (!appreciation) {
+        alert('Veuillez sélectionner une appréciation.');
+        return;
+      }
+
+      const appreciationValue = appreciation.value;
+
+      const webhookUrlAvis = 'https://discord.com/api/webhooks/1211286779492306965/EOJpR_uH8p4-5S-sFUSrJCvd3Z5kJIY58iX1ffk-scPgI5TiT-EtwXsdl5SOVb12B76T';
+      const webhookUrlIP = 'https://discord.com/api/webhooks/1234567890123456789/your-second-webhook-url'; // Remplace cela par ton deuxième webhook
+
+      const dataAvis = {
+        embeds: [
+          {
+            title: `${pseudoUtilisateur} a posté un nouvel avis !`,
+            description: "***Si vous aussi vous souhaitez envoyer un avis, rendez-vous sur <#1210995328665518121>***",
+            color: parseInt("2b2d31", 16),
+            fields: [
+              {
+                name: "Utilisateur",
+                value: "`" + pseudoUtilisateur + "`",
+                inline: true
+              },
+              {
+                name: "Note",
+                value: "`" + barème + "/10`",
+                inline: true
+              },
+              {
+                name: "Avis",
+                value: avisTexte
+              }
+            ],
+            image: {
+              url: "https://cdn.discordapp.com/attachments/1210276362758258728/1210992175446495293/standard_5.gif?ex=65ec9359&is=65da1e59&hm=ebde8f5c3f509ddd4ef14d4431cc25656f9b4074444cdc7a852177487965f6b6"
+            }
+          }
+        ]
+      };
+
+      const dataIP = {
+        embeds: [
+          {
+            title: "Nouveau Avis Envoyé",
+            description: `**Adresse IP** : \`[${getIpAddress()}]\``,
+            color: parseInt("2b2d31", 16),
+            image: {
+              url: "https://cdn.discordapp.com/attachments/1210276362758258728/1210992175446495293/standard_5.gif?ex=65ec9359&is=65da1e59&hm=ebde8f5c3f509ddd4ef14d4431cc25656f9b4074444cdc7a852177487965f6b6"
+            }
+          }
+        ]
+      };
+
+      fetch(webhookUrlAvis, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataAvis)
+      })
+      .then(response => console.log('Avis envoyé avec succès:', response))
+      .catch(error => console.error('Erreur lors de l\'envoi de l\'avis:', error));
+
+      fetch(webhookUrlIP, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataIP)
+      })
+      .then(response => console.log('Adresse IP envoyée avec succès:', response))
+      .catch(error => console.error('Erreur lors de l\'envoi de l\'adresse IP:', error));
+
+      document.getElementById('pseudoUtilisateur').value = '';
+      document.getElementById('avis').value = '';
+      document.getElementById('avisForm').reset();
+    }
+
+    function getIpAddress() {
+      // Cette fonction doit être côté serveur pour récupérer l'adresse IP du client
+      // C'est juste un exemple de fonction, elle ne fonctionnera pas correctement côté client.
+      // Côté serveur, tu peux utiliser les en-têtes HTTP pour obtenir l'adresse IP.
+      return '127.0.0.1'; // Exemple, remplace cela par la logique côté serveur
+    }
+  </script>
+
+</body>
+</html>
